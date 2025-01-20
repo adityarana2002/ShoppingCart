@@ -16,37 +16,44 @@ public class AdminController {
     private CategoryServiceIn categoryServiceIn;
 
     @GetMapping("/")
-    public String index(){
+    public String index() {
         return "admin/index";
     }
+
     @GetMapping("/loadAddProduct")
-    public String loadAddProduct(){
+    public String loadAddProduct() {
         return "admin/add_product";
     }
+
     @GetMapping("/category")
-    public String category(){
+    public String category() {
         return "admin/category";
     }
-    @PostMapping("/saveCategory")
-    public String saveCategory(@ModelAttribute Category category , @RequestParam("file") MultipartFile file, HttpSession session){
 
-       String imageName= file!=null ? file.getOriginalFilename() : "default.jpg";
-       category.setImageName(imageName);
+    @PostMapping("/saveCategory")
+    public String saveCategory(@ModelAttribute Category category, @RequestParam("file") MultipartFile file, HttpSession session) {
+
+        String imageName = file != null ? file.getOriginalFilename() : "default.jpg";
+        category.setImageName(imageName);
 
         Boolean existsCategory = categoryServiceIn.existsCategory(category.getName());
-        if(existsCategory){
-           session.setAttribute("Errormsg", "Category Name Already Exists");
-       }
-       else {
-           Category saveCategory = categoryServiceIn.saveCategory(category);
-           if (ObjectUtils.isEmpty(saveCategory)){
-               session.setAttribute("errorMsg","Not Saved : Internal Server Error !!!");
 
-           }
-           else{
-               session.setAttribute("successMsg","Saved Successfully !!!" );
-           }
-       }
+        if (existsCategory)
+        {
+            session.setAttribute("errorMsg", "Category Name Already Exists");
+
+        }
+        else
+        {
+            Category saveCategory = categoryServiceIn.saveCategory(category);
+            if (ObjectUtils.isEmpty(saveCategory))
+            {
+                session.setAttribute("errorMsg", "Not Saved : Internal Server Error !!!");
+            } else
+            {
+                session.setAttribute("successMsg", "Saved Successfully !!!");
+            }
+        }
 
         return "redirect:/admin/category";
     }
