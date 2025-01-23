@@ -42,4 +42,11 @@ public class CategoryServiceImpl implements CategoryServiceIn {
         return false;
     }
 
+    @Override
+    public Category getCategory(int id) {
+        Category category = categoryRepository.findById(id).orElse(null);
+
+        return category;
+    }
+
 }

@@ -11,6 +11,15 @@
           integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
           crossorigin="anonymous" referrerpolicy="no-referrer"/>
     <link rel="stylesheet" href="/css/style.css">
+
+    <script>
+        function confirmDelete(event){
+            const confirmed = confirm("Are you sure you want to delete ?");
+            if(!confirmed){
+            event.preventDefault();
+            }
+        }
+    </script>
 </head>
 <body>
 <!-- Start Navbar -->

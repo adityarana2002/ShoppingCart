@@ -36,7 +36,7 @@ public class AdminController {
 
     @GetMapping("/category")
     public String category(Model m) {
-        m.addAttribute("categories",categoryServiceIn.getAllCategory());
+        m.addAttribute("categories", categoryServiceIn.getAllCategory());
         return "admin/category";
     }
 
@@ -69,18 +69,49 @@ public class AdminController {
 
 
     @GetMapping("/deleteCategory/{id}")
-    public String deleteCategory(@PathVariable int id,HttpSession session){
+    public String deleteCategory(@PathVariable int id, HttpSession session) {
 
         Boolean deleteCategory = categoryServiceIn.deleteCategory(id);
-        if(deleteCategory){
+        if (deleteCategory) {
             session.setAttribute("successMsg", "category delete success");
-        }
-        else{
+        } else {
             session.setAttribute("errorMsg", "Something wrong on server");
         }
         return "redirect:/admin/category";
     }
 
 
+    @GetMapping("/loadEditCategory/{id}")
+    public String loadEditCategory(@PathVariable int id, Model model) {
+
+        model.addAttribute("category", categoryServiceIn.getCategory(id));
+
+        return "/admin/edit_category";
+    }
+
+    @PostMapping("/updateCategory")
+    public String updateCategory(@ModelAttribute Category category, @RequestParam("file") MultipartFile file, HttpSession session) throws IOException {
+        Category oldcategory = categoryServiceIn.getCategory(category.getId());
+        String imageName = file.isEmpty() ? oldcategory.getImageName() : file.getOriginalFilename();
+        if (!ObjectUtils.isEmpty(oldcategory)) {
+
+            oldcategory.setName(category.getName());
+            oldcategory.setIsActive(category.getIsActive());
+            oldcategory.setImageName(imageName);
+        }
+        Category updateCategory = categoryServiceIn.saveCategory(oldcategory);
+        if (!ObjectUtils.isEmpty(updateCategory)) {
+            if(!file.isEmpty()){
+                File saveFile = new ClassPathResource("static/img").getFile();
+                Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + "Category" + File.separator + file.getOriginalFilename());
+                System.out.println(path);
+                Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+            }
+            session.setAttribute("successMsg", "Category update success ");
+        } else {
+            session.setAttribute("errorMsg", "Something went wrong on server ");
+        }
+        return "redirect:/admin/loadEditCategory/" + category.getId();
+    }
 }
 
