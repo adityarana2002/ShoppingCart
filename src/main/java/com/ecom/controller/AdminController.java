@@ -60,7 +60,6 @@ public class AdminController {
                 Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + "Category" + File.separator + file.getOriginalFilename());
                 System.out.println(path);
                 Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-
                 session.setAttribute("successMsg", "Saved Successfully !!!");
             }
         }
